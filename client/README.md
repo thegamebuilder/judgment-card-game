@@ -1,1 +1,0 @@
-# judgment-card-game
