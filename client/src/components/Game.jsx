@@ -49,7 +49,7 @@ class Game extends React.Component {
             },
             body: JSON.stringify({
                 "round": this.state.trumps.length ? this.state.trumps.length : 1,
-                "players": this.state.players.map(val => { return val.text })
+                "players": this.state.players.map(val => { return val.id })
             }) // body data type must match "Content-Type" header
         })
             .then((response) => {
@@ -78,7 +78,7 @@ class Game extends React.Component {
                     <div className="row" >
                         {this.state.players.map(player => (
                             <div className="m-4">
-                                {<Hand player={player.text} cards={this.state.cards} />}
+                                {<Hand player={player.id} cards={this.state.cards} />}
                             </div>
 
                         ))
