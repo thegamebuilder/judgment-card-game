@@ -14,6 +14,8 @@ class Game extends React.Component {
             cards: {},
             trumps: ["H", "D", "S", "C", "H", "D", "S", "C", "H", "D"],
             currentTrump: "",
+            currentHand:[],
+            
         };
         this.addPlayer = this.addPlayer.bind(this);
         this.getCards = this.getCards.bind(this);
@@ -53,12 +55,10 @@ class Game extends React.Component {
             .then((response) => {
                 return response.json();
             }).then((cards) => {
-                console.log(cards, typeof cards); // this will be a string
                 this.setState((state) => ({
                     cards: cards
                 }));
                 console.log(this.state.cards);
-
             });
     }
 
