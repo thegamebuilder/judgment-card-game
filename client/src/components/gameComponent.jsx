@@ -65,7 +65,7 @@ class GameComponent extends React.Component {
             <div className="game" >
                 <h1>Judgement</h1>
                 <AddPlayer players={this.state.players} addPlayer={this.addPlayer} />
-                {this.state.players.length >= 5 ? <Button className="btn btn-block btn-lg btn-success mb-4 col-md-5" onClick={this.getCards()} >Start game</Button> : null}
+                {this.state.players.length >= 5 ? <Button className="btn btn-block btn-lg btn-success mb-4 col-md-5" onClick={this.getCards} >Start game</Button> : null}
             </div>
         );
     }
