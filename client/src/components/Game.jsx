@@ -1,7 +1,7 @@
 import React from "react";
 import { AddPlayers } from "./AddPlayers";
 import { Button } from "reactstrap";
-import { Player } from "./Player";
+import { Hand } from "./Hand";
 
 class Game extends React.Component {
     constructor(props) {
@@ -60,7 +60,22 @@ class Game extends React.Component {
                 <h1>Judgement</h1>
                 <AddPlayers cards={this.state.cards} players={this.state.players} addPlayer={this.addPlayer} />
                 {this.state.players.length >= 5 ? <Button className="btn btn-block btn-lg btn-success mb-4 col-md-5" onClick={this.getCards} >Start game</Button> : null}
-                {this.state.cards && Object.keys(this.state.cards).length ? <Player players={this.state.players} cards={this.state.cards} /> : null}
+                {this.state.cards && Object.keys(this.state.cards).length ?
+
+                    // <Player players={this.state.players} cards={this.state.cards} />
+                    <div className="container">
+                        <div className="row" >
+                            {this.state.players.map(player => (
+                                <div >
+                                    {<Hand player={player.text} cards={this.state.cards} />}
+                                </div>
+
+                            ))
+                            }
+                        </div>
+                    </div>
+
+                    : null}
 
             </div>
         );
