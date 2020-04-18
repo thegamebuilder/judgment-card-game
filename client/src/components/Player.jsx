@@ -1,7 +1,7 @@
 import React from 'react'
 import { PlayingCard } from './PlayingCard'
 
-export class PlayerComponent extends React.Component {
+export class Player extends React.Component {
     constructor(props) {
         super(props);
         // this.state = { card };

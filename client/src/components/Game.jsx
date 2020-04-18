@@ -1,9 +1,9 @@
 import React from "react";
 import { AddPlayer } from "./AddPlayer";
 import { Button } from "reactstrap";
-import { PlayerComponent } from "./PlayerComponent";
+import { Player } from "./Player";
 
-class GameComponent extends React.Component {
+class Game extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -60,11 +60,11 @@ class GameComponent extends React.Component {
                 <h1>Judgement</h1>
                 <AddPlayer cards={this.state.cards} players={this.state.players} addPlayer={this.addPlayer} />
                 {this.state.players.length >= 5 ? <Button className="btn btn-block btn-lg btn-success mb-4 col-md-5" onClick={this.getCards} >Start game</Button> : null}
-                {this.state.cards && Object.keys(this.state.cards).length ? <PlayerComponent players={this.state.players} cards={this.state.cards} /> : null}
+                {this.state.cards && Object.keys(this.state.cards).length ? <Player players={this.state.players} cards={this.state.cards} /> : null}
 
             </div>
         );
     }
 }
 
-export default GameComponent;
+export default Game;

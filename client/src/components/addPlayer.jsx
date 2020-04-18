@@ -1,6 +1,6 @@
 import React from 'react'
 import { InputGroup, InputGroupAddon, InputGroupText, Input, Button } from 'reactstrap';
-import { PlayerComponent } from './PlayerComponent';
+import { Player } from './Player';
 
 export class AddPlayer extends React.Component {
 
