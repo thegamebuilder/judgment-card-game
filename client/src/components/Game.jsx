@@ -13,16 +13,14 @@ class Game extends React.Component {
       currentRound: 10,
       cards: {},
       trumps: ["H", "D", "S", "C", "H", "D", "S", "C", "H", "D"],
-      currentTrump: '',
+      currentTrump: "",
     };
     this.addPlayer = this.addPlayer.bind(this);
     this.getCards = this.getCards.bind(this);
   }
 
   componentDidMount() {
-      console.log(this.state.trumps);
-    this.setState({ currentTrump: 'H'});
-    console.log(this.state.currentTrump)
+    this.setState({ currentTrump: this.state.trumps[0] });
   }
 
   addPlayer(playerName) {
@@ -68,9 +66,8 @@ class Game extends React.Component {
   render() {
     return (
       <div>
-        <h1>Judgement</h1>
-        <div className="row">
-          <div className="col col-md-6">
+        <div className="row text-center">
+          <div className="col col-md-6  my-auto">
             <AddPlayers
               cards={this.state.cards}
               players={this.state.players}
@@ -78,7 +75,7 @@ class Game extends React.Component {
             />
           </div>
           <div className="col col-md-6">
-            <PlayingCard card={ this.state.currentTrump} />
+            <PlayingCard card={this.state.currentTrump} />
           </div>
         </div>
         <div>
