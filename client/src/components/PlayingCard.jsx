@@ -9,7 +9,7 @@ export class PlayingCard extends React.Component {
       <div className="col-md-1">
         {" "}
         {
-          <img class="img-thumbnail" src={process.env.PUBLIC_URL + "/images/" + this.props.card + ".png"} alt="card" />
+          <img class="cardimg" src={process.env.PUBLIC_URL + "/images/" + this.props.card + ".png"} alt="card" />
         }
       </div>
     );

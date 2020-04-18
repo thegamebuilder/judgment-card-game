@@ -31,3 +31,17 @@
     transform: rotate(360deg);
   }
 }
+
+.carddiv{
+  width:100%;
+  text-align:center;     /* If you want it centered */
+  padding-right:102px;   /* Inverse the value of the card's right margin */
+  box-sizing:border-box; /* Because we want the padding to be included in the width calculation */
+}
+.cardimg{
+  display: inline-block;
+  height: 200px;
+}
+.rest{
+  margin-right: -102px; /* Use margin-right instead of margin-left */
+}
