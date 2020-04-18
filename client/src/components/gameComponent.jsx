@@ -1,14 +1,7 @@
 import React from "react";
-import { AddPlayer } from "./addPlayer";
-import { PlayingCard } from "./PlayingCard";
-import {
-    InputGroup,
-    InputGroupAddon,
-    InputGroupText,
-    Input,
-    Button,
-    Card,
-} from "reactstrap";
+import { AddPlayer } from "./AddPlayer";
+import { Button } from "reactstrap";
+import { PlayerComponent } from "./PlayerComponent";
 
 class GameComponent extends React.Component {
     constructor(props) {
@@ -17,6 +10,7 @@ class GameComponent extends React.Component {
             players: [],
             showWelcome: true,
             currentRound: 10,
+            cards: {}
         };
         this.addPlayer = this.addPlayer.bind(this);
         this.getCards = this.getCards.bind(this);
@@ -43,29 +37,31 @@ class GameComponent extends React.Component {
                 'Content-Type': 'application/json'
                 // 'Content-Type': 'application/x-www-form-urlencoded',
             },
-            // redirect: 'follow', // manual, *follow, error
-            // referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
-
             body: JSON.stringify({
                 "round": 10,
                 "players": this.state.players.map(val => { return val.text })
             }) // body data type must match "Content-Type" header
         })
-            .then(function (response) {
-                return response.text();
-            }).then(function (data) {
-                console.log(data); // this will be a string
+            .then((response) => {
+                return response.json();
+            }).then((cards) => {
+                console.log(cards, typeof cards); // this will be a string
+                this.setState((state) => ({
+                    cards: cards
+                }));
+                console.log(this.state.cards);
+
             });
-
-
     }
 
     render() {
         return (
             <div className="game" >
                 <h1>Judgement</h1>
-                <AddPlayer players={this.state.players} addPlayer={this.addPlayer} />
+                <AddPlayer cards={this.state.cards} players={this.state.players} addPlayer={this.addPlayer} />
                 {this.state.players.length >= 5 ? <Button className="btn btn-block btn-lg btn-success mb-4 col-md-5" onClick={this.getCards} >Start game</Button> : null}
+                {this.state.cards && Object.keys(this.state.cards).length ? <PlayerComponent players={this.state.players} cards={this.state.cards} /> : null}
+
             </div>
         );
     }

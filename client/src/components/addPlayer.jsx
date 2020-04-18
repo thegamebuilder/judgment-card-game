@@ -1,5 +1,6 @@
 import React from 'react'
 import { InputGroup, InputGroupAddon, InputGroupText, Input, Button } from 'reactstrap';
+import { PlayerComponent } from './PlayerComponent';
 
 export class AddPlayer extends React.Component {
 
@@ -32,6 +33,7 @@ export class AddPlayer extends React.Component {
                     </form>
                     : null}
                 <PlayerList items={this.props.players} />
+                
             </div>
         )
     }
@@ -43,6 +45,9 @@ class PlayerList extends React.Component {
             <ul>
                 {this.props.items.map(item => (
                     <li key={item.id}>{item.text}</li>
+                    // <div className="row">
+
+                    // </div>
                 ))}
             </ul>
         );
