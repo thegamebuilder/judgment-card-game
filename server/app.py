@@ -5,7 +5,10 @@ import json
 
 # app.py
 from flask import Flask, request           # import flask
+from flask_cors import CORS
+
 app = Flask(__name__)             # create an app instance
+CORS(app)
 
 @app.route("/cardDealer",methods=["POST"])                  
 def returnCardDealer():                      
