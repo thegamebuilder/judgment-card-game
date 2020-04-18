@@ -15,9 +15,10 @@ def returnCardDealer():
     hands = request.get_json()
     return cardDealer(hands["players"],hands["round"]),200
 
-@app.route("/deal")                   # at the end point /
-def hello2():                      # call method hello
-    return roundWinner( ["AC","JC","QS","KC","8H","6C"], "C")         # which returns "hello world"
+@app.route("/handWinner",methods=["POST"])                   
+def returnHandWinner():                      
+    jsonPID_Trmp = request.get_json()
+    return callRoundWinner(jsonPID_Trmp),200        
 
 def cardDealer (playerID,roundNum):
     '''
@@ -41,6 +42,37 @@ def cardDealer (playerID,roundNum):
 
     return json.dumps(cardsPerPlayer)  
 
+def callRoundWinner(jsonPID_Trmp):
+    '''
+    Input: JSON with player IDs, trump
+            {
+              "trump":"S",
+              "hands": [
+                { "playerId": "p1", "card": "AC"},
+                { "playerId": "p2", "card": "3C"},
+                { "playerId": "p3", "card": "4D"},
+                { "playerId": "p4", "card": "2S"},
+                { "playerId": "p5", "card": "QS"}
+               ]
+            }
+    Output: Winning player name
+    '''
+    jsonPID = {}
+    cardsList = []
+    
+    for k in jsonPID_Trmp.keys():
+        if k == "trump":
+            trump = jsonPID_Trmp[k]
+        else:
+            for i in range(0,len(jsonPID_Trmp['hands'])):
+                jsonPID [jsonPID_Trmp['hands'][i]['card']] = jsonPID_Trmp['hands'][i]['playerId']
+    
+    for i in jsonPID.keys():
+        cardsList.append(i)
+
+    cardWinner = roundWinner (cardsList,trump)
+
+    return jsonPID[cardWinner]
 
 def roundWinner (handSqnce = [],trump = ""):
     '''
