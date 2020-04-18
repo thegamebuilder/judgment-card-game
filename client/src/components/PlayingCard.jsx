@@ -6,10 +6,7 @@ export class PlayingCard extends React.Component {
       <div className="col-md-1">
         {" "}
         {
-          <img
-            className="portrait rounded"
-            src={process.env.PUBLIC_URL + "/images/" + this.props.card + ".png"}
-          />
+          <img src={process.env.PUBLIC_URL + "/images/" + this.props.card + ".png"} alt="card" />
         }
       </div>
     );
