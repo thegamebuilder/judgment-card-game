@@ -4,12 +4,13 @@ import numpy
 import json
 
 # app.py
-from flask import Flask           # import flask
+from flask import Flask, request           # import flask
 app = Flask(__name__)             # create an app instance
 
-@app.route("/")                   # at the end point /
-def hello():                      # call method hello
-    return cardDealer (["a1","a2","a3","a4","a5"],10)         # which returns "hello world"
+@app.route("/cardDealer",methods=["POST"])                  
+def returnCardDealer():                      
+    hands = request.get_json()
+    return cardDealer(hands["players"],hands["round"]),200
 
 @app.route("/deal")                   # at the end point /
 def hello2():                      # call method hello
