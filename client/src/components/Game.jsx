@@ -1,5 +1,5 @@
 import React from "react";
-import { AddPlayer } from "./AddPlayer";
+import { AddPlayers } from "./AddPlayers";
 import { Button } from "reactstrap";
 import { Player } from "./Player";
 
@@ -58,7 +58,7 @@ class Game extends React.Component {
         return (
             <div className="game" >
                 <h1>Judgement</h1>
-                <AddPlayer cards={this.state.cards} players={this.state.players} addPlayer={this.addPlayer} />
+                <AddPlayers cards={this.state.cards} players={this.state.players} addPlayer={this.addPlayer} />
                 {this.state.players.length >= 5 ? <Button className="btn btn-block btn-lg btn-success mb-4 col-md-5" onClick={this.getCards} >Start game</Button> : null}
                 {this.state.cards && Object.keys(this.state.cards).length ? <Player players={this.state.players} cards={this.state.cards} /> : null}
 
