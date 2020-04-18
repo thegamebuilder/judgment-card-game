@@ -5,7 +5,7 @@ export class EntryComponent extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = { players: [], text: '' };
+        this.state = { players: this.props.players, text: '' };
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
     }
