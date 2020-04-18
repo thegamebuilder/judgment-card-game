@@ -111,13 +111,5 @@ def splitCard(card):
     return (re.compile("([0-9a-zA-Z]+)([a-zA-Z]+)")).finditer(card)
 
 
-trumpResult = roundWinner(["2S","JC","QC","KS","8C","6C"],"H")
-print("Highest Trump card is {}".format(trumpResult)) 
-
-cardDealer (["a1","a2","a3","a4","a5"],6)
-
-
-
-
 if __name__ == "__main__":        # on running python app.py
     app.run()                     # run the flask app
