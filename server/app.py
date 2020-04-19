@@ -72,7 +72,7 @@ def callRoundWinner(jsonPID_Trmp):
 
     cardWinner = roundWinner (cardsList,trump)
 
-    return jsonPID[cardWinner]
+    return json.dumps(jsonPID[cardWinner])
 
 def roundWinner (handSqnce = [],trump = ""):
     '''
@@ -118,7 +118,7 @@ def highestCard (handSqnce):
 #        print("Index: {}, Value: {}".format(k,v))
     
     maxCard = str(max(cardSqnce.values()))        ##Typecasting integer back to string for concatenation 
-    if maxCard == (11 or 12 or 13 or 14):
+    if maxCard == '11' or maxCard == '12' or maxCard == '13' or maxCard == '14':
         maxCard = Num2Face(maxCard)
        
     return(maxCard + match.group(2))
