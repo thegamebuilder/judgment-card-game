@@ -96,10 +96,25 @@ class Game extends React.Component {
         return true;
     }
 
+    isRoundDone() {
+        return (Object.values(this.state.cards)[0]).length === 0;
+    }
+
+    updateRound() {
+        if (this.state.trumps.length) {
+            this.state.trumps.shift();
+            this.setState({
+                trumps: this.state.trumps,
+                currentTrump: this.state.trumps[0]
+            });
+        }
+    }
+
     isCurrentHandDone(playerId) {
-        this.state.currentHand && this.state.currentHand.find(hand => {
+        const currentHandDone = this.state.currentHand && this.state.currentHand.find(hand => {
             return hand.playerId === playerId
         });
+        return currentHandDone;
     }
 
     getCards() {
@@ -110,7 +125,7 @@ class Game extends React.Component {
                 // 'Content-Type': 'application/x-www-form-urlencoded',
             },
             body: JSON.stringify({
-                "round": this.state.trumps.length ? this.state.trumps.length : 1,
+                "round": this.state.trumps.length ? this.state.trumps.length : 0,
                 "players": this.state.players.map(val => { return val.id })
             }) // body data type must match "Content-Type" header
         })
@@ -133,6 +148,10 @@ class Game extends React.Component {
 
             .then(winner => {
                 console.log("hand winner is: ", winner);
+                if (this.isRoundDone() && this.state.trumps.length) { // round is done
+                    this.updateRound();
+                    this.getCards();
+                }
             });
     }
 
@@ -160,9 +179,9 @@ class Game extends React.Component {
                     <div className="col col-md-6  my-auto">
                         <AddPlayers cards={this.state.cards} players={this.state.players} addPlayer={this.addPlayer} />
                     </div>
-                    <div className="col col-md-6">
+                    {this.state.trumps.length ? <div className="col col-md-6">
                         <PlayingCard card={this.state.currentTrump} />
-                    </div>
+                    </div> : null}
                 </div>
                 <div className="row" >
                     <div className="col" >
