@@ -14,11 +14,12 @@ class Game extends React.Component {
             cards: {},
             trumps: ["H", "D", "S", "C", "H", "D", "S", "C", "H", "D"],
             currentTrump: "",
-            currentHand:[],
-            
+            currentHand: [],
+
         };
         this.addPlayer = this.addPlayer.bind(this);
         this.getCards = this.getCards.bind(this);
+        this.addHand = this.addHand.bind(this);
     }
 
 
@@ -40,6 +41,22 @@ class Game extends React.Component {
         }));
     }
 
+    addHand = (handData) => {
+        if (handData.length === 0) {
+            return;
+        }
+        const hand = {
+            playerId: handData.playerId,
+            card: handData.card,
+        };
+        this.setState((state) => ({
+            currentHand: state.currentHand.concat(hand),
+        }));
+        if (this.state.currentHand.length === 5) {
+            this.getHandWinner();
+        }
+    }
+
     getCards() {
         fetch('http://127.0.0.1:5000/cardDealer', {
             method: 'POST', // *GET, POST, PUT, DELETE, etc.
@@ -55,11 +72,40 @@ class Game extends React.Component {
             .then((response) => {
                 return response.json();
             }).then((cards) => {
-                this.setState((state) => ({
+                this.setState(() => ({
                     cards: cards
                 }));
                 console.log(this.state.cards);
             });
+    }
+
+    getHandWinner() {
+        const payLoad = {
+            "trump": this.state.currentTrump,
+            "hands": this.state.currentHand
+        }
+        this.fetchApi('handWinner', payLoad)
+
+            .then(winner => {
+                console.log("hand winner is: ", winner);
+            });
+    }
+
+    fetchApi(route, body) {
+        const url = 'http://127.0.0.1:5000/' + route;
+        return fetch(url, {
+            method: 'POST', // *GET, POST, PUT, DELETE, etc.
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(body)
+        })
+            .then((response) => {
+                return response.json();
+            })
+            .catch(err => {
+                console.log(err);
+            })
     }
 
     render() {
@@ -78,7 +124,7 @@ class Game extends React.Component {
                     <div className="row" >
                         {this.state.players.map(player => (
                             <div className="m-4">
-                                {<Hand player={player.id} cards={this.state.cards} />}
+                                {<Hand player={player} cards={this.state.cards} addHand={this.addHand} />}
                             </div>
 
                         ))
