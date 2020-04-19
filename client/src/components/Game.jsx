@@ -49,12 +49,29 @@ class Game extends React.Component {
             playerId: handData.playerId,
             card: handData.card,
         };
+
+        // this.setState((state) => ({ currentHand: state.currentHand.concat(hand) }), () => {
+        //     if (this.state.currentHand.length === 5) {
+        //         this.getHandWinner();
+        //     }
+        // }
+        // );
         this.setState((state) => ({
             currentHand: state.currentHand.concat(hand),
         }));
+
+        this.removeCard(handData.playerId, handData.card);
+
         if (this.state.currentHand.length === 5) {
             this.getHandWinner();
         }
+    }
+
+    removeCard(playerId, card) {
+        this.state.cards[playerId] = this.state.cards[playerId].filter(cardsData => {
+            return card != cardsData;
+        });
+        console.log(this.state.cards[playerId]);
     }
 
     getCards() {
