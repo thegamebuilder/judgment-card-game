@@ -15,13 +15,13 @@ class Game extends React.Component {
             trumps: ["H", "D", "S", "C", "H", "D", "S", "C", "H", "D"],
             currentTrump: "",
             currentHand: [],
+            disabledHand: false
 
         };
         this.addPlayer = this.addPlayer.bind(this);
         this.getCards = this.getCards.bind(this);
         this.addHand = this.addHand.bind(this);
     }
-
 
     componentDidMount() {
         this.setState({ currentTrump: this.state.trumps[0] });
@@ -53,6 +53,7 @@ class Game extends React.Component {
         // this.setState((state) => ({ currentHand: state.currentHand.concat(hand) }), () => {
         //     if (this.state.currentHand.length === 5) {
         //         this.getHandWinner();
+        //         this.state.currentHand = [];
         //     }
         // }
         // );
@@ -62,8 +63,17 @@ class Game extends React.Component {
 
         this.removeCard(handData.playerId, handData.card);
 
+        // if (this.state.currentHand.length === 5) {
+        //     this.getHandWinner();
+        // }
+    }
+
+    componentDidUpdate() {
         if (this.state.currentHand.length === 5) {
             this.getHandWinner();
+            this.setState({
+                currentHand: []
+            });
         }
     }
 
@@ -71,7 +81,6 @@ class Game extends React.Component {
         this.state.cards[playerId] = this.state.cards[playerId].filter(cardsData => {
             return card != cardsData;
         });
-        console.log(this.state.cards[playerId]);
     }
 
     getCards() {
@@ -128,6 +137,11 @@ class Game extends React.Component {
     render() {
         return (
             <div className="game" >
+                {this.state.players.length && this.state.currentHand.length ?
+                    this.state.disabledHand = this.state.currentHand.find(currentHand => {
+                        return currentHand.playerId === this.state.players.id;
+                    }) : null
+                }
                 <div className="row text-center">
                     <div className="col col-md-6  my-auto">
                         <AddPlayers cards={this.state.cards} players={this.state.players} addPlayer={this.addPlayer} />
@@ -140,8 +154,8 @@ class Game extends React.Component {
                 {this.state.cards && Object.keys(this.state.cards).length ?
                     <div className="row" >
                         {this.state.players.map(player => (
-                            <div className="m-4">
-                                {<Hand player={player} cards={this.state.cards} addHand={this.addHand} />}
+                            <div className="m-4" key={player.id}>
+                                {<Hand disabled={true} player={player} cards={this.state.cards} addHand={this.addHand} currentHand={this.state.currentHand} disabledHand={this.state.disabledHand} />}
                             </div>
 
                         ))
