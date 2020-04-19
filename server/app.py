@@ -118,7 +118,8 @@ def highestCard (handSqnce):
 #        print("Index: {}, Value: {}".format(k,v))
     
     maxCard = str(max(cardSqnce.values()))        ##Typecasting integer back to string for concatenation 
-    maxCard = Num2Face(maxCard)
+    if maxCard == (11 or 12 or 13 or 14):
+        maxCard = Num2Face(maxCard)
        
     return(maxCard + match.group(2))
 
