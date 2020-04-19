@@ -3,6 +3,7 @@ import { AddPlayers } from "./AddPlayers";
 import { Button } from "reactstrap";
 import { Hand } from "./Hand";
 import { PlayingCard } from "./PlayingCard";
+import { CurrentHand } from "./CurrentHand";
 
 class Game extends React.Component {
     constructor(props) {
@@ -15,8 +16,7 @@ class Game extends React.Component {
             trumps: ["H", "D", "S", "C", "H", "D", "S", "C", "H", "D"],
             currentTrump: "",
             currentHand: [],
-            disabledHand: false
-
+            currentHandBase: ""
         };
         this.addPlayer = this.addPlayer.bind(this);
         this.getCards = this.getCards.bind(this);
@@ -42,30 +42,33 @@ class Game extends React.Component {
     }
 
     addHand = (handData) => {
+        let canDeal = false;
+        let playerBase = handData.card.substr(handData.card.length - 1, 1);
         if (handData.length === 0) {
             return;
         }
-        const hand = {
-            playerId: handData.playerId,
-            card: handData.card,
-        };
 
-        // this.setState((state) => ({ currentHand: state.currentHand.concat(hand) }), () => {
-        //     if (this.state.currentHand.length === 5) {
-        //         this.getHandWinner();
-        //         this.state.currentHand = [];
-        //     }
-        // }
-        // );
-        this.setState((state) => ({
-            currentHand: state.currentHand.concat(hand),
-        }));
+        if (!this.state.currentHand.length) {
+            this.setState((state) => ({
+                currentHandBase: playerBase
+            }));
+            canDeal = true
+        } else {
+            if (!this.isCurrentHandDone(handData.playerId) && (playerBase === this.state.currentHandBase || this.isNoBaseCard(handData.playerId, this.state.currentHandBase))) {
+                canDeal = true;
+            }
+        }
 
-        this.removeCard(handData.playerId, handData.card);
-
-        // if (this.state.currentHand.length === 5) {
-        //     this.getHandWinner();
-        // }
+        if (canDeal) {
+            const hand = {
+                playerId: handData.playerId,
+                card: handData.card,
+            };
+            this.setState((state) => ({
+                currentHand: state.currentHand.concat(hand),
+            }));
+            this.removeCard(handData.playerId, handData.card);
+        }
     }
 
     componentDidUpdate() {
@@ -80,6 +83,22 @@ class Game extends React.Component {
     removeCard(playerId, card) {
         this.state.cards[playerId] = this.state.cards[playerId].filter(cardsData => {
             return card != cardsData;
+        });
+    }
+
+    isNoBaseCard(playerId, currentBase) {
+        for (let card of this.state.cards[playerId]) {
+            let base = card.substr(card.length - 1, 1);
+            if (base === currentBase) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    isCurrentHandDone(playerId) {
+        this.state.currentHand && this.state.currentHand.find(hand => {
+            return hand.playerId === playerId
         });
     }
 
@@ -137,11 +156,6 @@ class Game extends React.Component {
     render() {
         return (
             <div className="game" >
-                {this.state.players.length && this.state.currentHand.length ?
-                    this.state.disabledHand = this.state.currentHand.find(currentHand => {
-                        return currentHand.playerId === this.state.players.id;
-                    }) : null
-                }
                 <div className="row text-center">
                     <div className="col col-md-6  my-auto">
                         <AddPlayers cards={this.state.cards} players={this.state.players} addPlayer={this.addPlayer} />
@@ -150,20 +164,35 @@ class Game extends React.Component {
                         <PlayingCard card={this.state.currentTrump} />
                     </div>
                 </div>
-                {this.state.players.length >= 5 ? <Button className="btn btn-block btn-lg btn-success mb-4 col-md-5" onClick={this.getCards} >Start game</Button> : null}
+                <div className="row" >
+                    <div className="col" >
+                        {this.state.players.length >= 5 ? <Button className="btn btn-block btn-lg btn-success mb-4 col-md-5" onClick={this.getCards} >Start game</Button> : null}
+                    </div>
+                    {this.state.currentHand.length ?
+                        <div className="row" >
+                            {
+                                this.state.currentHand.map(currHand => (
+                                    < CurrentHand card={currHand.card} />
+
+                                ))
+
+                            }
+                        </div>
+                        : null}
+                </div>
+
+
                 {this.state.cards && Object.keys(this.state.cards).length ?
                     <div className="row" >
                         {this.state.players.map(player => (
                             <div className="m-4" key={player.id}>
-                                {<Hand disabled={true} player={player} cards={this.state.cards} addHand={this.addHand} currentHand={this.state.currentHand} disabledHand={this.state.disabledHand} />}
+                                {<Hand disabled={true} player={player} cards={this.state.cards} addHand={this.addHand} currentHand={this.state.currentHand} />}
                             </div>
 
                         ))
                         }
                     </div>
-
                     : null}
-
             </div>
         );
     }

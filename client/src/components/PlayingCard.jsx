@@ -10,21 +10,13 @@ export class PlayingCard extends React.Component {
       currentHandDone: {}
     }
   }
- // componentWillReceiveProps(nextProps) {
-   // this.setState({ currentHand: nextProps.currentHand});
-//}
 
   handleAddHand() {
-    const currentHandDone = this.props.currentHand && this.props.currentHand.find(hand => {
-      return hand.playerId === this.props.player.id
-    });
-    if (!currentHandDone) {
-      const handPayload = {
-        card: this.props.card,
-        playerId: this.props.player.id
-      }
-      this.props.addHand(handPayload);
+    const handPayload = {
+      card: this.props.card,
+      playerId: this.props.player.id
     }
+    this.props.addHand(handPayload);
 
   }
 
