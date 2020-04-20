@@ -5,6 +5,14 @@ import { Hand } from "./Hand";
 import { PlayingCard } from "./PlayingCard";
 import { CurrentHand } from "./CurrentHand";
 
+var tableStyle = {
+    width: "100%",
+    height: "300px",
+    backgroundRepeat: 'no-repeat',
+    backgroundImage: `url(${process.env.PUBLIC_URL + "/images/asset_table.png"})`,
+    backgroundPosition: 'center'
+};
+
 class Game extends React.Component {
     constructor(props) {
         super(props);
@@ -16,7 +24,8 @@ class Game extends React.Component {
             trumps: ["H", "D", "S", "C", "H", "D", "S", "C", "H", "D"],
             currentTrump: "",
             currentHand: [],
-            currentHandBase: ""
+            currentHandBase: "",
+            gameStarted: false
         };
         this.addPlayer = this.addPlayer.bind(this);
         this.getCards = this.getCards.bind(this);
@@ -118,6 +127,13 @@ class Game extends React.Component {
     }
 
     getCards() {
+        if (!this.state.gameStarted) {
+            this.setState(() => ({
+                gameStarted: true
+            }));
+        }
+
+
         fetch('http://127.0.0.1:5000/cardDealer', {
             method: 'POST', // *GET, POST, PUT, DELETE, etc.
             headers: {
@@ -174,44 +190,53 @@ class Game extends React.Component {
 
     render() {
         return (
-            <div className="game" >
-                <div className="row text-center">
-                    <div className="col col-md-6  my-auto">
-                        <AddPlayers cards={this.state.cards} players={this.state.players} addPlayer={this.addPlayer} />
-                    </div>
-                    {this.state.trumps.length ? <div className="col col-md-6">
-                        <PlayingCard card={this.state.currentTrump} />
-                    </div> : null}
-                </div>
-                <div className="row" >
-                    <div className="col" >
-                        {this.state.players.length >= 5 ? <Button className="btn btn-block btn-lg btn-success mb-4 col-md-5" onClick={this.getCards} >Start game</Button> : null}
-                    </div>
-                    {this.state.currentHand.length ?
+            <div>
+                {!this.state.gameStarted ?
+                    <div className="game" >
+                        <div className="row text-center">
+                            <div className="col col-md-6  my-auto">
+                                <AddPlayers cards={this.state.cards} players={this.state.players} addPlayer={this.addPlayer} />
+                            </div>
+                        </div>
                         <div className="row" >
+                            <div className="col" >
+                                {this.state.players.length >= 5 ? <Button className="btn btn-block btn-lg btn-success mb-4 col-md-5" onClick={this.getCards} >Start game</Button> : null}
+                            </div>
+                        </div>
+                    </div> : null
+                }
+
+                <div className="row">
+                    <div className="col-md-2 m-4 text-center"></div>
+                    {this.state.currentHand.length ?
+                        <div className="col-xs-10 d-flex justify-content-center" style={tableStyle}>
                             {
                                 this.state.currentHand.map(currHand => (
                                     < CurrentHand card={currHand.card} />
-
                                 ))
-
                             }
                         </div>
                         : null}
-                </div>
-
-
-                {this.state.cards && Object.keys(this.state.cards).length ?
-                    <div className="row" >
-                        {this.state.players.map(player => (
-                            <div className="m-4" key={player.id}>
-                                {<Hand disabled={true} player={player} cards={this.state.cards} addHand={this.addHand} currentHand={this.state.currentHand} />}
+                    <div className="col-md-2 m-4 text-center"></div></div>
+                <div className="row">
+                    {this.state.cards && Object.keys(this.state.cards).length ?
+                        this.state.players.map(player => (
+                            <div className="row"><div className="col-md-2 m-4 text-center">
+                                <h5> Trump Card </h5>
+                                {this.state.trumps.length ?
+                                    <img className="cardimg hvr-outline-out" src={process.env.PUBLIC_URL + "/images/asset_" + this.state.currentTrump + ".png"} alt="card" />
+                                    : null}
                             </div>
-
+                                <div className="col-md-8">
+                                    <div className="m-4" key={player.id}>
+                                        {<Hand disabled={true} player={player} cards={this.state.cards} addHand={this.addHand} currentHand={this.state.currentHand} />}
+                                    </div>
+                                </div>
+                                <div className="col-md-2"></div>
+                            </div>
                         ))
-                        }
-                    </div>
-                    : null}
+                        : null}
+                </div>
             </div>
         );
     }
