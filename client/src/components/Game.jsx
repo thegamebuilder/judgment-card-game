@@ -2,7 +2,6 @@ import React from "react";
 import { AddPlayers } from "./AddPlayers";
 import { Button } from "reactstrap";
 import { Hand } from "./Hand";
-import { PlayingCard } from "./PlayingCard";
 import { CurrentHand } from "./CurrentHand";
 
 var tableStyle = {
@@ -19,9 +18,10 @@ class Game extends React.Component {
         this.state = {
             players: [],
             showWelcome: true,
-            currentRound: 10,
             cards: {},
             trumps: ["H", "D", "S", "C", "H", "D", "S", "C", "H", "D"],
+            orderOfRounds: [], // order of rounds with respective player
+            currentOrderOfPlayers: [], // two stages: after each deal winner and after each round winner
             currentTrump: "",
             currentHand: [],
             currentHandBase: "",
@@ -33,7 +33,7 @@ class Game extends React.Component {
     }
 
     componentDidMount() {
-        this.setState({ currentTrump: this.state.trumps[0] });
+        this.setCurrentTrump();
     }
 
     addPlayer(playerName) {
@@ -47,6 +47,7 @@ class Game extends React.Component {
         this.setState((state) => ({
             players: state.players.concat(newItem),
             text: "",
+            currentOrderOfPlayers: state.currentOrderOfPlayers.concat(newItem.id)
         }));
     }
 
@@ -57,13 +58,13 @@ class Game extends React.Component {
             return;
         }
 
-        if (!this.state.currentHand.length) {
+        if (!this.state.currentHand.length && this.isNextPlayer(handData.playerId)) {
             this.setState((state) => ({
                 currentHandBase: playerBase
             }));
             canDeal = true
         } else {
-            if (!this.isCurrentHandDone(handData.playerId) && (playerBase === this.state.currentHandBase || this.isNoBaseCard(handData.playerId, this.state.currentHandBase))) {
+            if (this.isNextPlayer(handData.playerId) && (playerBase === this.state.currentHandBase || this.isNoBaseCard(handData.playerId, this.state.currentHandBase))) {
                 canDeal = true;
             }
         }
@@ -93,6 +94,7 @@ class Game extends React.Component {
         this.state.cards[playerId] = this.state.cards[playerId].filter(cardsData => {
             return card != cardsData;
         });
+        this.state.currentOrderOfPlayers.shift(); // remove the current order user for that hand
     }
 
     isNoBaseCard(playerId, currentBase) {
@@ -112,18 +114,40 @@ class Game extends React.Component {
     updateRound() {
         if (this.state.trumps.length) {
             this.state.trumps.shift();
-            this.setState({
-                trumps: this.state.trumps,
-                currentTrump: this.state.trumps[0]
-            });
+            this.state.orderOfRounds.shift();
+            this.updateRoundPlayer();
+            this.setCurrentTrump();
         }
     }
 
-    isCurrentHandDone(playerId) {
-        const currentHandDone = this.state.currentHand && this.state.currentHand.find(hand => {
-            return hand.playerId === playerId
+    updateRoundPlayer() {
+        this.updateCurrentPlayerOrder(this.state.orderOfRounds[0])
+    }
+
+    // set new order of players based on the winner
+    updateCurrentPlayerOrder(startPlayer) {
+        let tempArr = [];
+        let rotateIndex;
+        this.state.players.map((player, index) => {
+            if (player.id === startPlayer || rotateIndex !== undefined) {
+                rotateIndex = (rotateIndex === undefined) ? index : rotateIndex;
+                this.state.currentOrderOfPlayers.push(player.id);
+            }
+            if (rotateIndex === undefined) {
+                tempArr.push(player.id);
+            }
         });
-        return currentHandDone;
+        if (tempArr.length) {
+            this.state.currentOrderOfPlayers.push(...tempArr);
+        }
+    }
+
+    isNextPlayer(playerId) {
+        return this.state.currentOrderOfPlayers[0] === playerId;
+    }
+
+    setCurrentTrump() {
+        this.setState({ currentTrump: this.state.trumps[0] });
     }
 
     getCards() {
@@ -132,7 +156,11 @@ class Game extends React.Component {
                 gameStarted: true
             }));
         }
-
+        this.state.trumps.forEach(trump => {
+            this.state.players.map((player) => {
+                this.state.orderOfRounds.push(player.id);
+            });
+        });
 
         fetch('http://127.0.0.1:5000/cardDealer', {
             method: 'POST', // *GET, POST, PUT, DELETE, etc.
@@ -164,7 +192,11 @@ class Game extends React.Component {
 
             .then(winner => {
                 console.log("hand winner is: ", winner);
+                if (!this.isRoundDone()) {
+                    this.updateCurrentPlayerOrder(winner);
+                }
                 if (this.isRoundDone() && this.state.trumps.length) { // round is done
+                    // TODO: calculate current round winner
                     this.updateRound();
                     this.getCards();
                 }
